@@ -1,0 +1,27 @@
+name: pi_manager
+description: A mobile manager app for your Raspberry Pi (CasaOS, qBittorrent, Arr, Yacd, Healthwatch).
+publish_to: "none" # karena ini project lokal
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # library tambahan
+  http: ^1.2.2
+  url_launcher: ^6.3.0
+
+  # Material design icons
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

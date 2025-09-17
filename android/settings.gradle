@@ -1,0 +1,42 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = uri("https://storage.googleapis.com/download.flutter.io") }
+    }
+    // Versi plugin didefinisikan DI SINI (bukan di build.gradle.kts)
+    plugins {
+        id "com.android.application" version "8.9.1"
+        id "org.jetbrains.kotlin.android" version "2.1.0"
+        id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    }
+}
+
+def props = new Properties()
+def localProps = file("local.properties")
+if (localProps.exists()) {
+    localProps.withInputStream { props.load(it) }
+}
+
+def flutterSdk = props.getProperty("flutter.sdk") ?: System.getenv("FLUTTER_SDK")
+if (flutterSdk == null) {
+    throw new GradleException("Flutter SDK tidak ditemukan. Tambahkan 'flutter.sdk' di local.properties atau set env FLUTTER_SDK.")
+}
+
+includeBuild("${flutterSdk}/packages/flutter_tools/gradle")
+
+plugins {
+    id "dev.flutter.flutter-plugin-loader"
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://storage.googleapis.com/download.flutter.io") }
+    }
+}
+
+include(":app")
