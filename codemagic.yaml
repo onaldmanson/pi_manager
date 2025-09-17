@@ -6,19 +6,23 @@ workflows:
     environment:
       flutter: stable
       java: 17
+
     scripts:
       - name: Prepare & deps
         script: |
           flutter --version
           flutter pub get
-      - name: Fix android template (if needed)
+
+      - name: Regenerate clean Android folder
         script: |
-          # hapus settings.gradle.kts kalau ada
-          [ -f android/settings.gradle.kts ] && rm android/settings.gradle.kts || true
-          # regen template android agar Gradle valid
-          flutter create . --platforms=android --overwrite
+          # Hapus folder android lama agar tidak ada sisa konfigurasi yang bentrok
+          rm -rf android
+          # Buat ulang template Android sesuai versi Flutter di mesin build
+          flutter create . --platforms=android
+
       - name: Build debug APK
         script: |
           flutter build apk --debug
+
     artifacts:
       - build/app/outputs/flutter-apk/app-debug.apk
