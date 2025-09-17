@@ -2,10 +2,24 @@ workflows:
   android_apk_debug:
     name: Android APK (debug)
     max_build_duration: 60
-    instance_type: mac_mini_m1
+
+    # Pindah ke Linux agar unduhan Flutter lebih stabil/cepat
+    instance_type: linux_x2   # atau linux_x1 jika x2 tidak tersedia
+
     environment:
-      flutter: stable
+      # Pin versi Flutter biar tidak download “latest” setiap kali
+      flutter: 3.24.3
       java: 17
+      # Jika kamu berada di jaringan yang susah akses Google Storage,
+      # kamu bisa aktifkan mirror ini (hapus tanda #):
+      # FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
+      # PUB_HOSTED_URL: https://pub.flutter-io.cn
+
+    cache:
+      cache_paths:
+        - $CM_BUILD_DIR/.pub-cache
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
 
     scripts:
       - name: Prepare & deps
@@ -15,9 +29,7 @@ workflows:
 
       - name: Regenerate clean Android folder
         script: |
-          # Hapus folder android lama agar tidak ada sisa konfigurasi yang bentrok
           rm -rf android
-          # Buat ulang template Android sesuai versi Flutter di mesin build
           flutter create . --platforms=android
 
       - name: Build debug APK
