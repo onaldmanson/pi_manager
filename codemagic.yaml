@@ -2,14 +2,16 @@ workflows:
   android_apk_debug:
     name: Android APK (debug)
     max_build_duration: 60
-    instance_type: linux_x2        # pakai Linux (gratis). Kalau tidak ada, gunakan "linux"
+    # Gunakan Linux agar tidak kena limit plan macOS
+    instance_type: linux_x2
+
     environment:
       flutter: stable
       java: 17
-      # mirror opsional agar download lebih stabil
       vars:
-        PUB_HOSTED_URL: https://pub.flutter-io.cn
+        # MIRROR opsional (punyamu sudah aktif; boleh hapus jika tidak perlu)
         FLUTTER_STORAGE_BASE_URL: https://storage.flutter-io.cn
+        PUB_HOSTED_URL: https://pub.flutter-io.cn
 
     scripts:
       - name: Prepare & deps
@@ -17,15 +19,13 @@ workflows:
           flutter --version
           flutter pub get
 
-      - name: Regenerate clean Android folder (fix settings.gradle)
+      - name: Regenerate clean Android folder (safe)
         script: |
-          # buang file settings.gradle/settings.gradle.kts yang rusak
           rm -f android/settings.gradle || true
           rm -f android/settings.gradle.kts || true
-          # optional: bersihkan cache gradle lokal project
           rm -rf android/.gradle || true
-          # tulis ulang template Android sesuai versi Flutter di mesin build
-          flutter create . --platforms=android --overwrite
+          # Tidak pakai --overwrite => lib/ & pubspec.yaml aman
+          flutter create . --platforms=android
 
       - name: Build debug APK
         script: |
